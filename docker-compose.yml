@@ -187,6 +187,7 @@ services:
 
 ### PHP-FPM ##############################################
     php-fpm:
+      image: laradock_php-fpm:${PHP_VERSION}
       build:
         context: ./php-fpm
         args:
@@ -218,6 +219,7 @@ services:
           - INSTALL_AEROSPIKE=${PHP_FPM_INSTALL_AEROSPIKE}
           - INSTALL_OCI8=${PHP_FPM_INSTALL_OCI8}
           - INSTALL_MYSQLI=${PHP_FPM_INSTALL_MYSQLI}
+          - INSTALL_MYSQL=${PHP_FPM_INSTALL_MYSQL}
           - INSTALL_PGSQL=${PHP_FPM_INSTALL_PGSQL}
           - INSTALL_PG_CLIENT=${PHP_FPM_INSTALL_PG_CLIENT}
           - INSTALL_POSTGIS=${PHP_FPM_INSTALL_POSTGIS}
@@ -440,6 +442,7 @@ services:
 
 ### MySQL ################################################
     mysql:
+      image: laradock_mysql:${MYSQL_VERSION}
       build:
         context: ./mysql
         args:

@@ -567,6 +567,15 @@ RUN if [ ${INSTALL_MYSQLI} = true ]; then \
     docker-php-ext-install mysqli \
 ;fi
 
+###########################################################################
+# php version 5.6 then install php_mysql extension
+###########################################################################
+
+ARG INSTALL_MYSQL=false
+
+RUN if [ ${LARADOCK_PHP_VERSION} = "5.6" -a ${INSTALL_MYSQL} = true ]; then \
+    docker-php-ext-install mysql \
+;fi
 
 ###########################################################################
 # Human Language and Character Encoding Support:
