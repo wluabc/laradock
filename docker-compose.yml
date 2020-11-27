@@ -266,6 +266,7 @@ services:
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       environment:
+        - TZ=${WORKSPACE_TIMEZONE}
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
         - DOCKER_HOST=tcp://docker-in-docker:2376
         - DOCKER_TLS_VERIFY=1
@@ -363,6 +364,8 @@ services:
           - http_proxy
           - https_proxy
           - no_proxy
+      environment:
+        - TZ=${WORKSPACE_TIMEZONE}
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
@@ -399,6 +402,8 @@ services:
           - PHP_UPSTREAM_TIMEOUT=${APACHE_PHP_UPSTREAM_TIMEOUT}
           - DOCUMENT_ROOT=${APACHE_DOCUMENT_ROOT}
           - APACHE_INSTALL_HTTP2=${APACHE_INSTALL_HTTP2}
+      environment:
+        - TZ=${WORKSPACE_TIMEZONE}
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
