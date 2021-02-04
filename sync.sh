@@ -62,7 +62,7 @@ if [ "$1" == "up" ] ; then
     echo ${@}
     if [ "1${@}" == "1" ]; then
         print_style "Starting services:\n" "warning"
-        print_style "nginx php-fpm mysql phpmyadmin redis memcached workspace.\n" "info"
+        print_style "nginx php-fpm mysql redis memcached workspace.\n" "info"
         docker-compose up -d nginx php-fpm mysql redis memcached workspace
         exit 0
     fi

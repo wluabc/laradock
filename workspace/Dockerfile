@@ -525,18 +525,37 @@ ARG INSTALL_SWOOLE=false
 
 RUN if [ ${INSTALL_SWOOLE} = true ]; then \
     # Install Php Swoole Extension
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      pecl -q install swoole-2.0.10; \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" -a $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
+      pecl install swoole-4.5.9; \
     else \
-      if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
-        pecl install swoole-2.2.0; \
+      if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+        pecl -q install swoole-2.0.10; \
       else \
-        pecl install swoole; \
-      fi \
-    fi && \
-    echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini && \
+        if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
+          pecl install swoole-2.2.0; \
+        else \
+          pecl install swoole; \
+        fi \
+      ;fi \
+    ;fi \
+    && echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini && \
     ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-swoole.ini \
     && php -m | grep -q 'swoole' \
+;fi
+
+###########################################################################
+# XLSWRITER EXTENSION
+###########################################################################
+
+ARG INSTALL_XLSWRITER=false
+
+RUN if [ ${INSTALL_XLSWRITER} = true ]; then \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
+      pecl -q install xlswriter; \
+    fi && \
+    echo "extension=xlswriter.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini && \
+    ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xlswriter.ini \
+    && php -m | grep -q 'xlswriter' \
 ;fi
 
 ###########################################################################
@@ -672,8 +691,10 @@ ENV NVM_NODEJS_ORG_MIRROR ${NVM_NODEJS_ORG_MIRROR}
 
 RUN if [ ${INSTALL_NODE} = true ]; then \
     # Install nvm (A Node Version Manager)
+    # echo '199.232.96.133 raw.githubusercontent.com' >> /etc/hosts && \
     mkdir -p $NVM_DIR && \
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash \
+    # curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash \
+    git clone https://github.com/nvm-sh/nvm.git .$NVM_DIR \
         && . $NVM_DIR/nvm.sh \
         && nvm install ${NODE_VERSION} \
         && nvm use ${NODE_VERSION} \
@@ -1508,3 +1529,5 @@ RUN apt-get clean && \
 
 # Set default work directory
 WORKDIR /var/www
+
+EXPOSE 9503 9504
