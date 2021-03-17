@@ -40,7 +40,7 @@ display_options () {
     printf "Available options:\n";
     print_style "   install" "info"; printf "\t\t Installs docker-sync gem on the host machine.\n"
     print_style "   up [services]" "success"; printf "\t Starts docker-sync and runs docker compose.\n"
-    print_style "   down" "success"; printf "\t\t\t Stops containers and docker-sync.\n"
+    print_style "   down [services]" "success"; printf "\t\t\t Stops containers and docker-sync.\n"
     print_style "   bash" "success"; printf "\t\t\t Opens bash on the workspace with user laradock.\n"
     print_style "   sync" "info"; printf "\t\t\t Manually triggers the synchronization of files.\n"
     print_style "   clean" "danger"; printf "\t\t Removes all files from docker-sync.\n"
@@ -59,15 +59,38 @@ if [ "$1" == "up" ] ; then
 
     print_style "Initializing Docker Compose\n" "info"
     shift # removing first argument
+    echo ${@}
+    if [ "1${@}" == "1" ]; then
+        print_style "Starting services:\n" "warning"
+        print_style "nginx php-fpm mysql redis memcached workspace.\n" "info"
+        docker-compose up -d nginx php-fpm mysql redis memcached workspace
+        exit 0
+    fi
     docker-compose up -d ${@}
 
 elif [ "$1" == "down" ]; then
+    shift # removing first argument
+    if [ "1${@}" != "1" ]; then
+        print_style "Stop services: ${@}\n" "warning"
+        docker-compose stop ${@}
+        exit 0
+    fi
     print_style "Stopping Docker Compose\n" "info"
     docker-compose stop
 
     print_style "Stopping Docker Sync\n" "info"
     docker-sync stop
+elif [ "$1" == "restart" ]; then
+    shift # removing first argument
+    if [ "1${@}" == "1" ]; then
+        print_style "Missing arguments.\n" "danger"
+        exit 0
+    fi
+    print_style "Stopping service: ${@}" "warning"
+    docker-compose stop ${@}
 
+    print_style "\nStarting service: ${@}\n" "warning"
+    docker-compose up -d ${@}
 elif [ "$1" == "bash" ]; then
     docker-compose exec --user=laradock workspace bash
 

@@ -273,17 +273,35 @@ ARG INSTALL_SWOOLE=false
 
 RUN if [ ${INSTALL_SWOOLE} = true ]; then \
     # Install Php Swoole Extension
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      pecl install swoole-2.0.10; \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" -a $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
+      pecl install swoole-4.5.9; \
     else \
-      if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
-        pecl install swoole-2.2.0; \
+      if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+        pecl install swoole-2.0.10; \
       else \
-        pecl install swoole; \
-      fi \
-    fi && \
-    docker-php-ext-enable swoole \
+        if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
+          pecl install swoole-2.2.0; \
+        else \
+          pecl install swoole; \
+        fi \
+      ;fi \
+    ;fi \
+    && docker-php-ext-enable swoole \
     && php -m | grep -q 'swoole' \
+;fi
+
+###########################################################################
+# XLSWRITER:
+###########################################################################
+
+ARG INSTALL_XLSWRITER=false
+
+RUN if [ ${INSTALL_XLSWRITER} = true ]; then \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
+      pecl install xlswriter && \
+      docker-php-ext-enable xlswriter && \
+      php -m | grep -q 'xlswriter' \
+    ;fi \
 ;fi
 
 ###########################################################################
@@ -567,6 +585,15 @@ RUN if [ ${INSTALL_MYSQLI} = true ]; then \
     docker-php-ext-install mysqli \
 ;fi
 
+###########################################################################
+# php version 5.6 then install php_mysql extension
+###########################################################################
+
+ARG INSTALL_MYSQL=false
+
+RUN if [ ${LARADOCK_PHP_VERSION} = "5.6" -a ${INSTALL_MYSQL} = true ]; then \
+    docker-php-ext-install mysql \
+;fi
 
 ###########################################################################
 # Human Language and Character Encoding Support:
@@ -669,6 +696,7 @@ USER root
 ARG INSTALL_IMAGEMAGICK=false
 
 RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
+    apt-get update && \
     apt-get install -y libmagickwand-dev imagemagick && \
     pecl install imagick && \
     docker-php-ext-enable imagick \
