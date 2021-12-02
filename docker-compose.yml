@@ -285,7 +285,7 @@ services:
           - http_proxy
           - https_proxy
           - no_proxy
-### 自定义扩展 #############################
+          ### 自定义扩展 #############################
           - INSTALL_MYSQL=${PHP_FPM_INSTALL_MYSQL}
           - INSTALL_XLSWRITER=${PHP_FPM_INSTALL_XLSWRITER}
           - INSTALL_V8JS=${PHP_FPM_INSTALL_V8JS}
@@ -424,10 +424,14 @@ services:
           aliases:
             - inn.core.kuaidihelp.com
             - order.core.kuaidihelp.com
+            - kop.kuaidihelp.com
+            - orders.interface.kuaidihelp.com
         backend:
           aliases:
             - inn.core.kuaidihelp.com
             - order.core.kuaidihelp.com
+            - kop.kuaidihelp.com
+            - orders.interface.kuaidihelp.com
 ### OpenResty Server #########################################
     openresty:
       build:
