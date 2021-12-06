@@ -1691,7 +1691,7 @@ RUN set -xe; \
 ARG INSTALL_XLSWRITER=false
 
 RUN if [ ${INSTALL_XLSWRITER} = true ]; then \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") >= "7" ]; then \
       pecl -q install xlswriter; \
     fi && \
     echo "extension=xlswriter.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/xlswriter.ini && \
